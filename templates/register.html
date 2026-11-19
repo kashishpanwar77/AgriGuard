@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AgriGuard | Create Account</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body class="auth-page">
+
+
+<div class="auth-layout">
+
+
+    <!-- LEFT -->
+
+    <div class="auth-visual">
+
+        <div class="auth-brand">
+            🌱 AgriGuard
+        </div>
+
+        <div class="auth-content">
+
+            <span class="auth-badge">
+                🚜 Build a smarter harvest
+            </span>
+
+            <h1>
+                Turn agricultural data
+                into actionable insights.
+            </h1>
+
+            <p>
+                Create your AgriGuard account and
+                start generating machine-learning
+                based post-harvest loss predictions.
+            </p>
+
+        </div>
+
+        <div class="auth-bottom">
+            Your agricultural intelligence workspace
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT -->
+
+    <div class="auth-panel">
+
+        <div class="auth-card">
+
+            <div class="mobile-brand">
+                🌱 AgriGuard
+            </div>
+
+
+            <div class="auth-heading">
+
+                <span>Get started</span>
+
+                <h2>
+                    Create your account
+                </h2>
+
+                <p>
+                    Set up your personal AgriGuard workspace.
+                </p>
+
+            </div>
+
+
+            {% with messages = get_flashed_messages(
+                with_categories=true
+            ) %}
+
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <form method="POST"
+                  class="auth-form">
+
+
+                <div class="input-group">
+
+                    <label for="full_name">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Your full name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Minimum 6 characters"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="confirm_password">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        placeholder="Re-enter your password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="auth-btn">
+
+                    Create Account →
+
+                </button>
+
+
+            </form>
+
+
+            <div class="auth-switch">
+
+                Already have an account?
+
+                <a href="{{ url_for('login') }}">
+                    Login
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

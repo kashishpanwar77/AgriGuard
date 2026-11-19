@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AgriGuard | Prediction</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body class="app-page">
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="app-navbar">
+
+    <div class="app-logo">
+
+        <span class="logo-mark">🌱</span>
+
+        <div>
+            <strong>AgriGuard</strong>
+            <small>Smart Agriculture</small>
+        </div>
+
+    </div>
+
+
+    <div class="app-nav-links">
+
+        <a href="/" class="active">
+            Prediction
+        </a>
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <div class="user-menu">
+
+        <div class="user-avatar">
+            {{ user_name[0]|upper if user_name else "U" }}
+        </div>
+
+        <div class="user-info">
+
+            <strong>
+                {{ user_name }}
+            </strong>
+
+            <span>
+                Farmer / Analyst
+            </span>
+
+        </div>
+
+        <a href="{{ url_for('logout') }}"
+           class="logout-link">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================================================
+     FLASH MESSAGES
+========================================================= -->
+
+{% with messages = get_flashed_messages(
+    with_categories=true
+) %}
+
+    {% if messages %}
+
+        <div class="flash-container">
+
+            {% for category, message in messages %}
+
+                <div class="alert alert-{{ category }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+{% endwith %}
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="prediction-wrapper">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="prediction-hero">
+
+        <div>
+
+            <span class="section-badge">
+                🌾 ML-Powered Agriculture
+            </span>
+
+            <h1>
+                Smarter Insights
+                <span>for Every Harvest.</span>
+            </h1>
+
+            <p>
+                Estimate post-harvest loss using historical
+                agricultural data and machine learning.
+            </p>
+
+        </div>
+
+
+        <div class="hero-model-card">
+
+            <span class="model-icon">
+                🤖
+            </span>
+
+            <div>
+
+                <small>
+                    ACTIVE ML MODEL
+                </small>
+
+                <strong>
+                    Gradient Boosting
+                </strong>
+
+                <span>
+                    Time-based validation
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PREDICTION GRID
+    ====================================================== -->
+
+    <section class="prediction-grid">
+
+
+        <!-- =================================================
+             FORM CARD
+        ================================================== -->
+
+        <div class="prediction-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <span class="card-number">
+                        01
+                    </span>
+
+                    <h2>
+                        Prediction Details
+                    </h2>
+
+                    <p>
+                        Enter the agricultural information below.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form method="POST"
+                  class="prediction-form">
+
+
+                <!-- COUNTRY -->
+
+                <div class="form-field">
+
+                    <label for="country">
+                        Country
+                    </label>
+
+                    <select
+                        id="country"
+                        name="country"
+                        required>
+
+                        <option value="">
+                            Select country
+                        </option>
+
+                        {% for country_option in countries %}
+
+                            <option value="{{ country_option }}">
+
+                                {{ country_option }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- CROP -->
+
+                <div class="form-field">
+
+                    <label for="crop">
+                        Crop / Commodity
+                    </label>
+
+                    <select
+                        id="crop"
+                        name="crop"
+                        required>
+
+                        <option value="">
+                            Select crop
+                        </option>
+
+                        {% for crop_option in crops %}
+
+                            <option value="{{ crop_option }}">
+
+                                {{ crop_option }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- YEAR -->
+
+                <div class="form-row">
+
+
+                    <div class="form-field">
+
+                        <label for="year">
+                            Year
+                        </label>
+
+                        <input
+                            type="number"
+                            id="year"
+                            name="year"
+                            min="{{ min_year }}"
+                            max="{{ max_year }}"
+                            value="{{ max_year }}"
+                            required>
+
+                        <small class="field-hint">
+                            Supported: {{ min_year }}–{{ max_year }}
+                        </small>
+
+                    </div>
+
+
+                    <!-- QUANTITY -->
+
+                    <div class="form-field">
+
+                        <label for="quantity">
+                            Quantity (kg)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="quantity"
+                            name="quantity"
+                            min="0"
+                            step="0.01"
+                            placeholder="e.g. 100"
+                            required>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ACTIVITY -->
+
+                <div class="form-field">
+
+                    <label for="activity">
+                        Activity
+                    </label>
+
+                    <select
+                        id="activity"
+                        name="activity"
+                        required>
+
+                        <option value="">
+                            Select activity
+                        </option>
+
+                        {% for activity_option in activities %}
+
+                            <option value="{{ activity_option }}">
+
+                                {{ activity_option }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- STAGE -->
+
+                <div class="form-field">
+
+                    <label for="stage">
+                        Food Supply Stage
+                    </label>
+
+                    <select
+                        id="stage"
+                        name="stage"
+                        required>
+
+                        <option value="">
+                            Select supply stage
+                        </option>
+
+                        {% for stage_option in stages %}
+
+                            <option value="{{ stage_option }}">
+
+                                {{ stage_option }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- BUTTON -->
+
+                <button
+                    type="submit"
+                    class="predict-main-btn">
+
+                    <span>
+                        Run ML Prediction
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================================
+             HOW IT WORKS
+        ================================================== -->
+
+        <div class="prediction-side">
+
+
+            <div class="how-card">
+
+                <span class="side-label">
+                    HOW IT WORKS
+                </span>
+
+                <h2>
+                    From data to decision.
+                </h2>
+
+                <p>
+                    AgriGuard processes your agricultural
+                    information through a machine-learning
+                    pipeline.
+                </p>
+
+
+                <div class="process-step">
+
+                    <div class="process-icon">
+                        01
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Enter Data
+                        </strong>
+
+                        <span>
+                            Crop, country, year and supply-stage details.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-line"></div>
+
+
+                <div class="process-step">
+
+                    <div class="process-icon">
+                        02
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            ML Prediction
+                        </strong>
+
+                        <span>
+                            Gradient Boosting estimates the expected loss.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-line"></div>
+
+
+                <div class="process-step">
+
+                    <div class="process-icon">
+                        03
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Risk Assessment
+                        </strong>
+
+                        <span>
+                            The predicted loss is classified into a risk level.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- MODEL INFO -->
+
+            <div class="model-info-card">
+
+                <div class="model-info-icon">
+                    ⚙️
+                </div>
+
+                <div>
+
+                    <strong>
+                        Model Information
+                    </strong>
+
+                    <p>
+                        HistGradientBoostingRegressor
+                    </p>
+
+                    <span>
+                        Trained using historical loss data
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         RESULT
+    ====================================================== -->
+
+    {% if result %}
+
+    <section class="result-section">
+
+
+        <div class="result-header">
+
+            <div>
+
+                <span class="section-badge">
+                    ✓ Prediction Complete
+                </span>
+
+                <h2>
+                    Your Prediction Result
+                </h2>
+
+                <p>
+                    Based on the information provided.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="result-grid">
+
+
+            <!-- LOSS -->
+
+            <div class="result-main-card">
+
+                <span>
+                    PREDICTED LOSS
+                </span>
+
+                <div class="loss-value">
+
+                    {{ result.loss_percentage }}%
+
+                </div>
+
+                <p>
+                    Estimated post-harvest loss
+                </p>
+
+            </div>
+
+
+            <!-- RISK -->
+
+            <div class="risk-result-card
+                {% if result.risk_level == 'Low' %}
+                    result-low
+                {% elif result.risk_level == 'Medium' %}
+                    result-medium
+                {% else %}
+                    result-high
+                {% endif %}">
+
+                <span>
+                    RISK LEVEL
+                </span>
+
+                <strong>
+                    {{ result.risk_level }}
+                </strong>
+
+                <p>
+                    Based on the predicted loss percentage.
+                </p>
+
+            </div>
+
+
+            <!-- RECOMMENDATION -->
+
+            <div class="recommendation-card">
+
+                <div class="recommendation-icon">
+                    💡
+                </div>
+
+                <div>
+
+                    <span>
+                        RECOMMENDATION
+                    </span>
+
+                    <p>
+                        {{ result.recommendation }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- INPUT SUMMARY -->
+
+        <div class="prediction-summary">
+
+            <div class="summary-item">
+
+                <span>Country</span>
+
+                <strong>
+                    {{ result.country }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span>Crop</span>
+
+                <strong>
+                    {{ result.crop }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span>Year</span>
+
+                <strong>
+                    {{ result.year }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span>Activity</span>
+
+                <strong>
+                    {{ result.activity }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span>Supply Stage</span>
+
+                <strong>
+                    {{ result.stage }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span>Quantity</span>
+
+                <strong>
+                    {{ result.quantity }} kg
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="app-footer">
+
+        <span>
+            🌱 AgriGuard
+        </span>
+
+        <span>
+            Post-Harvest Loss Prediction System
+        </span>
+
+        <a href="/dashboard">
+            View Dashboard →
+        </a>
+
+    </footer>
+
+
+</main>
+
+
+</body>
+
+</html>
